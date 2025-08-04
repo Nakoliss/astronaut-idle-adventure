@@ -1,0 +1,46 @@
+{
+  "tickSeconds": 1,
+  "resources": {
+    "scrap":   { "baseRate": 0.2,  "softCap": 10000, "exponent": 1.6 },
+    "ice":     { "baseRate": 0.1,  "softCap":  5000, "exponent": 1.6 },
+    "protein": { "baseRate": 0.05, "softCap":  3000, "exponent": 1.25 },
+    "fuel":    { "baseRate": 0.02, "softCap":  2000, "exponent": 1.25 }
+  },
+  "startingState": {
+    "scrap": 0,
+    "ice": 0,
+    "protein": 0,
+    "fuel": 100,
+    "drones": 1,
+    "survivors": 0,
+    "buildings": {
+      "droneBay": 0,
+      "habPod": 0,
+      "hydroponics": 0,
+      "refinery": 0
+    },
+    "techUnlocked": [],
+    "warpFragments": 0
+  },
+  "tutorialGates": {
+    "droneBayCost": 10,
+    "habPodUnlockScrap": 100
+  },
+  "buildCosts": {
+    "droneBay": 50,
+    "drone": 10,
+    "habPod": 100,
+    "hydroponics": 150,
+    "refinery": 250
+  },
+  "tech": {
+    "salvageDroneMkI":   { "tier": 1, "cost": 50,  "prereq": [] },
+    "droneAIUpgrade":    { "tier": 2, "cost": 250, "prereq": ["salvageDroneMkI"] },
+    "quantumSplitter":   { "tier": 3, "cost": 1000,"prereq": ["droneAIUpgrade"] },
+    "warpGate":          { "tier": 4, "cost": 3000,"prereq": ["shieldGeneratorMkI"] }
+  },
+  "bossRequirements": {
+    "fragmentsNeeded": 5,
+    "fuelNeeded": 1000
+  }
+}

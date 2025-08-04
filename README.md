@@ -1,0 +1,74 @@
+# Astronaut Idle Adventure
+
+An idle game where you play as an astronaut exploring space, collecting resources, building structures, and advancing through technology to survive and thrive in the cosmos.
+
+## Features
+
+- Resource collection (scrap, ice, protein, fuel)
+- Building construction (drone bays, habitation pods, hydroponics, refineries)
+- Technology research and progression
+- Drone automation
+- Survival mechanics
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js (v14 or higher)
+- npm or yarn
+
+### Installation
+
+1. Clone the repository
+```bash
+git clone <repository-url>
+cd "Astronaut Idle Adventure"
+```
+
+2. Install dependencies
+```bash
+npm install
+```
+
+3. Start the development server
+```bash
+npm run dev
+```
+
+## Game Balance
+
+The game balance is configured in `game_balance.json`, which includes:
+- Resource generation rates and soft caps
+- Building costs
+- Technology trees and requirements
+- Tutorial progression gates
+- End game boss requirements
+
+## Project Structure
+
+```
+├── game_balance.json    # Game balance configuration
+├── package.json         # Node.js dependencies and scripts
+├── README.md           # This file
+├── .gitignore          # Git ignore rules
+└── src/                # Source code (to be created)
+```
+
+## Development
+
+- `npm run dev` - Start development server with hot reload
+- `npm run build` - Build for production
+- `npm test` - Run tests
+- `npm run lint` - Check code style
+
+## Contributing
+
+1. Fork the project
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.

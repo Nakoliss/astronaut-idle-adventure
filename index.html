@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Astronaut Idle Adventure</title>
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <div id="game-container">
+        <header>
+            <h1>🚀 Astronaut Idle Adventure</h1>
+            <div id="resource-display">
+                <div class="resource">
+                    <span class="resource-icon">🔩</span>
+                    <span class="resource-name">Scrap:</span>
+                    <span id="scrap-count">0</span>
+                </div>
+                <div class="resource">
+                    <span class="resource-icon">🧊</span>
+                    <span class="resource-name">Ice:</span>
+                    <span id="ice-count">0</span>
+                </div>
+                <div class="resource">
+                    <span class="resource-icon">🥩</span>
+                    <span class="resource-name">Protein:</span>
+                    <span id="protein-count">0</span>
+                </div>
+                <div class="resource">
+                    <span class="resource-icon">⛽</span>
+                    <span class="resource-name">Fuel:</span>
+                    <span id="fuel-count">100</span>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <section id="buildings-section">
+                <h2>Buildings</h2>
+                <div id="buildings-container">
+                    <!-- Building buttons will be dynamically generated -->
+                </div>
+            </section>
+
+            <section id="technology-section">
+                <h2>Technology</h2>
+                <div id="tech-container">
+                    <!-- Technology buttons will be dynamically generated -->
+                </div>
+            </section>
+
+            <section id="status-section">
+                <h2>Status</h2>
+                <div id="status-info">
+                    <p>Drones: <span id="drone-count">1</span></p>
+                    <p>Survivors: <span id="survivor-count">0</span></p>
+                    <p>Warp Fragments: <span id="fragment-count">0</span></p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="js/game.js"></script>
+</body>
+</html>
