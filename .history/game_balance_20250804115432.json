@@ -1,0 +1,146 @@
+/**
+ * Astronaut Idle Adventure – economy simulator
+ * Usage:  node simIdleCycle.js
+ */
+const fs = require('fs');
+const cfg = JSON.parse(fs.readFileSync('./game_balance.json', 'utf8'));
+
+// ---------- helpers ---------------------------------------------------------
+function softCap(value, cap, exp) {
+  return 1 / (1 + Math.pow(value / cap, exp));
+}
+function hhmm(ticks, secPerTick) {
+  const mins = Math.floor((ticks * secPerTick) / 60);
+  return `${Math.floor(mins / 60)} hours ${mins % 60} minutes`;
+}
+function log(msg) {
+  console.log(msg);
+}
+
+// ---------- state -----------------------------------------------------------
+let tick = 0;
+const state = JSON.parse(JSON.stringify(cfg.startingState));
+let droneCost = cfg.buildCosts.drone;
+
+// milestone logging
+const milestones = [];
+function m(msg) { milestones.push(`[${hhmm(tick, cfg.tickSeconds)}] ${msg}`); }
+
+// ---------- sim loop --------------------------------------------------------
+const distinctBuildings = () =>
+  Object.values(state.buildings).filter(x => x > 0).length;
+
+function produce() {
+  for (const [res, obj] of Object.entries(cfg.resources)) {
+    let baseRate = obj.baseRate;
+    if (res === 'scrap') baseRate *= state.drones; // only modelling scrap prod here
+    const prod =
+      baseRate *
+      (1 + 0.02 * distinctBuildings()) *
+      softCap(state[res], obj.softCap, obj.exponent);
+
+    state[res] += prod;
+  }
+}
+
+function aiActions() {
+  // build Drone Bay
+  if (state.buildings.droneBay === 0 && state.scrap >= cfg.buildCosts.droneBay) {
+    state.scrap -= cfg.buildCosts.droneBay;
+    state.buildings.droneBay = 1;
+    m('Built Drone Bay');
+  }
+  // buy drones
+  if (state.scrap >= droneCost) {
+    state.scrap -= droneCost;
+    state.drones += 1;
+    droneCost *= cfg.costScaling.droneGrowth;
+    if (state.drones === 1) m('Built first Drone');
+  }
+  // unlock simple tech in order
+  if (
+    !state.techUnlocked.includes('salvageDroneMkI') &&
+    state.scrap >= cfg.tech.salvageDroneMkI.cost
+  ) {
+    state.scrap -= cfg.tech.salvageDroneMkI.cost;
+    state.techUnlocked.push('salvageDroneMkI');
+    m('Unlocked salvageDroneMkI');
+  }
+  if (
+    !state.techUnlocked.includes('droneAIUpgrade') &&
+    state.scrap >= cfg.tech.droneAIUpgrade.cost
+  ) {
+    state.scrap -= cfg.tech.droneAIUpgrade.cost;
+    state.techUnlocked.push('droneAIUpgrade');
+    m('Unlocked droneAIUpgrade');
+  }
+  if (
+    !state.techUnlocked.includes('quantumSplitter') &&
+    state.scrap >= cfg.tech.quantumSplitter.cost
+  ) {
+    state.scrap -= cfg.tech.quantumSplitter.cost;
+    state.techUnlocked.push('quantumSplitter');
+    m('Unlocked quantumSplitter');
+  }
+}
+
+function checkWarpProgress() {
+  // cheat: simulate one fragment each in-game hour
+  if (tick % 3600 === 0 && state.warpFragments < cfg.bossRequirements.fragmentsNeeded) {
+    state.warpFragments += 1;
+    m(`Generated warp fragment ${state.warpFragments}`);
+  }
+  // collect fuel passively
+  if (state.fuel < cfg.bossRequirements.fuelNeeded) state.fuel += cfg.resources.fuel.baseRate;
+
+  if (
+    state.warpFragments >= cfg.bossRequirements.fragmentsNeeded &&
+    state.fuel >= cfg.bossRequirements.fuelNeeded
+  ) {
+    m('WARP ACHIEVED!');
+    return true;
+  }
+  return false;
+}
+
+// ---------- run -------------------------------------------------------------
+log('Starting simulation...');
+m('Initial state');
+
+let done = false;
+while (!done && tick < 200000) {
+  produce();
+  aiActions();
+  done = checkWarpProgress();
+  tick += 1;
+
+  // verbose progress every 10 minutes
+  if (tick % 600 === 0) {
+    milestones.push(
+      `[${hhmm(tick, cfg.tickSeconds)}] Progress - Scrap:${state.scrap.toFixed(
+        0
+      )}  Drones:${state.drones}  Fragments:${state.warpFragments}  Fuel:${state.fuel.toFixed(0)}`
+    );
+  }
+}
+
+// ---------- report ----------------------------------------------------------
+console.log('\n=== SIMULATION SUMMARY ===');
+const totalHr = (tick * cfg.tickSeconds) / 3600;
+console.log(`Warp achieved in ${totalHr.toFixed(1)} hours (ticks = ${tick})\n`);
+console.log('Milestones:');
+milestones.forEach(l => console.log('- ' + l));
+console.log('\nFinal State:');
+console.log(
+  JSON.stringify(
+    {
+      Scrap: Math.floor(state.scrap),
+      Fuel: Math.floor(state.fuel),
+      Drones: state.drones,
+      WarpFragments: state.warpFragments,
+      Technologies: state.techUnlocked.length
+    },
+    null,
+    2
+  )
+);
